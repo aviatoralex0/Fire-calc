@@ -296,13 +296,10 @@ Medellín,Colombia,6.2442,-75.5812,COP,0.32,65000,0.85,0.28,0.45,0.45,0.55,0.55,
 Manila,Philippines,14.5995,120.9842,PHP,0.28,50000,0.87,0.24,0.40,0.40,0.50,0.50,0.45
 """
 
-@st.cache_data(ttl=24*60*60)
+@st.cache_data
 def load_cities():
-    try:
-        return pd.read_csv("cities_demo.csv")
-    except Exception:
-        return pd.read_csv(io.StringIO(FALLBACK_CITIES_CSV))
-
+    # Usa sempre il dataset integrato nel codice (fallback)
+    return pd.read_csv(io.StringIO(FALLBACK_CITIES_CSV))
 # -----------------------------------------------------------------------------
 # Cambi FX
 # -----------------------------------------------------------------------------
