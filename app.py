@@ -359,13 +359,35 @@ def simulate_capital(wealth0, spend_real_year, r_real_port, infl, age_start, age
     return ages, cap_real, cap_nom
 
 # -----------------------------------------------------------------------------
-# UI – lingua
+# Traduzioni robuste + UI lingua
 # -----------------------------------------------------------------------------
+@st.cache_data
+def load_i18n():
+    try:
+        with open("translations.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+        # Se il file è vuoto o manca 'en' → uso il fallback
+        if not isinstance(data, dict) or not data or "en" not in data:
+            return FALLBACK_I18N
+        return data
+    except Exception:
+        return FALLBACK_I18N
+
+def T(lang, key, **kwargs):
+    base = I18N.get("en", {})
+    cur = I18N.get(lang, base)
+    val = cur.get(key, base.get(key, key))
+    return val.format(**kwargs) if kwargs else val
+
 I18N = load_i18n()
+langs = list(I18N.keys()) if isinstance(I18N, dict) and I18N else list(FALLBACK_I18N.keys())
+default_idx = langs.index("it") if "it" in langs else 0
+
 lang = st.sidebar.selectbox("Language / Lingua / Idioma / Langue",
-                            options=list(I18N.keys()),
-                            index=list(I18N.keys()).index("it") if "it" in I18N else 0)
-st.sidebar.write(f"{I18N[lang].get('meta_language_label','Language')}: {lang.upper()}")
+                            options=langs, index=default_idx)
+
+meta_label = I18N.get(lang, I18N.get("en", {})).get("meta_language_label", "Language")
+st.sidebar.write(f"{meta_label}: {lang.upper()}")
 
 st.title(T(lang, "title"))
 st.caption(T(lang, "subtitle"))
