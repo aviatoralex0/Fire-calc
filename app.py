@@ -456,10 +456,19 @@ infl = st.sidebar.slider(T(lang,"infl"), 0.0, 0.08, 0.02, 0.005)
 pensione = st.sidebar.number_input(T(lang,"pension"), min_value=0, value=0, step=500)
 start_pens_age = st.sidebar.number_input(T(lang,"pension_age"), min_value=age, max_value=horizon_age, value=max(age,67))
 
-# -----------------------------------------------------------------------------
-# Calcoli base per città
-# -----------------------------------------------------------------------------
-ori = cities[cities["city"]==origin_city].iloc[0]
+# Lookup robusto della città selezionata
+if cities is None or cities.empty or "city" not in cities.columns:
+    st.error("Dataset città non disponibile o vuoto. Carica 'cities_demo.csv' o usa il fallback.")
+    st.stop()
+
+mask = cities["city"].astype(str).eq(str(origin_city))
+if not mask.any():
+    st.warning(f"La città '{origin_city}' non è nel dataset. Uso la prima disponibile.")
+    origin_city = cities["city"].iloc[0]
+    mask = cities["city"].astype(str).eq(str(origin_city))
+
+ori = cities.loc[mask].iloc[0] -----------------------------------------------------------------------------
+
 adj_mult = 1.0 + (adj_pct/100.0)
 origin_idx_by_cat = {
     "housing": ori["idx_housing"]*adj_mult,
