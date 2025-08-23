@@ -467,7 +467,8 @@ if not mask.any():
     origin_city = cities["city"].iloc[0]
     mask = cities["city"].astype(str).eq(str(origin_city))
 
-ori = cities.loc[mask].iloc[0] -----------------------------------------------------------------------------
+ori = cities.loc[mask].iloc[0] 
+#-----------------------------------------------------------------------------
 
 adj_mult = 1.0 + (adj_pct/100.0)
 origin_idx_by_cat = {
