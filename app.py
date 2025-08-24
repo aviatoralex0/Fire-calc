@@ -545,6 +545,25 @@ for _, row in cities.iterrows():
     details[row["city"]] = {"breakdown_city": bc, "currency": cur, "rate": rate}
 
 table = pd.DataFrame(rows).sort_values("fire_pct", ascending=False).reset_index(drop=True)
+# ---------------- RIEPILOGO ALTO ----------------
+num_cities = len(table)
+num_fire = int((table["fire_pct"] >= 100).sum())
+pct_fire = (100.0 * num_fire / num_cities) if num_cities else 0.0
+
+st.subheader("📌 Riepilogo")
+col1, col2, col3 = st.columns(3)
+
+# Patrimonio: mostra in valuta scelta + equivalente EUR
+col1.metric("Patrimonio", f"{wealth_ref:,.0f} {ref_currency}", f"≈ €{wealth0:,.0f}")
+
+# % di città del dataset dove sei già FIRE (≥100%)
+col2.metric("% città dove sei FIRE", f"{pct_fire:.0f}%", f"{num_fire}/{num_cities}")
+
+# Spesa annua inserita dall’utente (nella valuta scelta)
+col3.metric("Spesa annua (input)", f"{total_spend_ref:,.0f} {ref_currency}")
+
+st.caption("Nota: % calcolata sulle città presenti nel dataset demo.")
+st.divider()
 
 # -----------------------------------------------------------------------------
 # Mappa: modalità colore
@@ -624,7 +643,8 @@ with tab2:
     st.subheader(T(lang,"detail_city"))
     city_sel = st.selectbox(T(lang,"city_label"), table["city"].tolist(), index=0)
 
-    r = cities[cities["city"]==city_sel].iloc[0]
+    mask_city = cities["city"].astype(str).eq(str(city_sel))
+r = cities.loc[mask_city].iloc[0] if mask_city.any() else cities.iloc[0]
     idx_dest = {"housing": r["idx_housing"], "food":r["idx_food"], "transport":r["idx_transport"],
                 "utilities":r["idx_utilities"], "leisure":r["idx_leisure"], "healthcare":r["idx_healthcare"]}
     bc = {c: (total_spend_year*mult*(perc[c]/100.0))*(idx_dest[c]/max(origin_idx_by_cat[c],1e-6)) for c in cats}
