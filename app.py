@@ -416,12 +416,12 @@ origin_city = st.sidebar.selectbox(
 adj_pct = st.sidebar.slider(T(lang, "origin_adj"), -50, 50, 0, step=5)
 
 st.sidebar.header(T(lang, "user_params"))
-wealth0 = st.sidebar.number_input(T(lang,"wealth"), min_value=0, value=500000, step=1000)
+wealth_ref = st.sidebar.number_input(f"{T(lang,'wealth')} [{ref_currency}]", min_value=0, value=500000, step=1000)
 age = st.sidebar.number_input(T(lang,"age"), min_value=18, max_value=90, value=40, step=1)
 horizon_age = st.sidebar.number_input(T(lang,"horizon"), min_value=age+5, max_value=100, value=90, step=1)
 
 st.sidebar.subheader(T(lang,"style_spend"))
-total_spend_year = st.sidebar.number_input(T(lang,"total_spend"), min_value=0, value=30000, step=500)
+total_spend_ref = st.sidebar.number_input(f"{T(lang,'total_spend')} [{ref_currency}]", min_value=0, value=30000, step=500)
 style_options = [T(lang,"style_frugal"), T(lang,"style_normal"), T(lang,"style_fat")]
 stile = st.sidebar.select_slider(T(lang,"style"), options=style_options, value=T(lang,"style_normal"))
 mult_map = {T(lang,"style_frugal"):0.7, T(lang,"style_normal"):1.0, T(lang,"style_fat"):1.3}
@@ -452,13 +452,14 @@ r_cash   = st.sidebar.slider(T(lang,"r_cash"), 0.00, 0.03, 0.00, 0.005)
 r_re_app = st.sidebar.slider(T(lang,"r_re"), -0.02, 0.06, 0.01, 0.005)
 
 st.sidebar.subheader(T(lang,"rent"))
-rent_income = st.sidebar.number_input(T(lang,"rent"), min_value=0, value=0, step=500)
+rent_ref = st.sidebar.number_input(f"{T(lang,'rent')} [{ref_currency}]", min_value=0, value=0, step=500)
 
 r_real_port = (w_stocks/100)*r_stocks + (w_bonds/100)*r_bonds + (w_cash/100)*r_cash + (w_re/100)*r_re_app
 
 st.sidebar.subheader(T(lang,"infl_pens"))
 infl = st.sidebar.slider(T(lang,"infl"), 0.0, 0.08, 0.02, 0.005)
-pensione = st.sidebar.number_input(T(lang,"pension"), min_value=0, value=0, step=500)
+pensione_ref = st.sidebar.number_input(f"{T(lang,'pension')} [{ref_currency}]", min_value=0, value=0, step=500)
+
 start_pens_age = st.sidebar.number_input(T(lang,"pension_age"), min_value=age, max_value=horizon_age, value=max(age,67))
 
 # Lookup robusto della città selezionata
