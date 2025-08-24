@@ -394,6 +394,14 @@ st.caption(T(lang, "subtitle"))
 # -----------------------------------------------------------------------------
 cities = load_cities()
 fx, live = get_fx_rates()
+# --- Valuta di riferimento per input ---
+with st.sidebar.expander("Currency / Valuta / Moneda / Devise", expanded=True):
+    # elenco valute disponibili dalle FX (ordino per leggibilità)
+    fx_list = sorted(list(fx.keys()))
+    default_fx = "EUR" if "EUR" in fx_list else fx_list[0]
+    ref_currency = st.selectbox("Reference currency", options=fx_list, index=fx_list.index(default_fx))
+    rate_ref = fx.get(ref_currency, 1.0)  # 1 EUR = rate_ref ref_currency
+    st.caption(f"1 EUR ≈ {rate_ref:.4g} {ref_currency}")
 st.sidebar.write(f"{T(lang,'sidebar_fx')}: {'🟢 live' if live else '🟡 fallback'}")
 
 # -----------------------------------------------------------------------------
