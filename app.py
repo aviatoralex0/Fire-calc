@@ -644,7 +644,7 @@ with tab2:
     city_sel = st.selectbox(T(lang,"city_label"), table["city"].tolist(), index=0)
 
     mask_city = cities["city"].astype(str).eq(str(city_sel))
-r = cities.loc[mask_city].iloc[0] if mask_city.any() else cities.iloc[0]
+    r = cities.loc[mask_city].iloc[0] if mask_city.any() else cities.iloc[0]
     idx_dest = {"housing": r["idx_housing"], "food":r["idx_food"], "transport":r["idx_transport"],
                 "utilities":r["idx_utilities"], "leisure":r["idx_leisure"], "healthcare":r["idx_healthcare"]}
     bc = {c: (total_spend_year*mult*(perc[c]/100.0))*(idx_dest[c]/max(origin_idx_by_cat[c],1e-6)) for c in cats}
