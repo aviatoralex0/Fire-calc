@@ -415,20 +415,27 @@ origin_city = st.sidebar.selectbox(
 )
 adj_pct = st.sidebar.slider(T(lang, "origin_adj"), -50, 50, 0, step=5)
 
+# ========================== SIDEBAR (con valuta scelta) ==========================
 st.sidebar.header(T(lang, "user_params"))
-wealth_ref = st.sidebar.number_input(f"{T(lang,'wealth')} [{ref_currency}]", min_value=0, value=500000, step=1000)
+wealth_ref = st.sidebar.number_input(
+    f"{T(lang,'wealth')} [{ref_currency}]",
+    min_value=0, value=500000, step=1000
+)
 age = st.sidebar.number_input(T(lang,"age"), min_value=18, max_value=90, value=40, step=1)
 horizon_age = st.sidebar.number_input(T(lang,"horizon"), min_value=age+5, max_value=100, value=90, step=1)
 
 st.sidebar.subheader(T(lang,"style_spend"))
-total_spend_ref = st.sidebar.number_input(f"{T(lang,'total_spend')} [{ref_currency}]", min_value=0, value=30000, step=500)
+total_spend_ref = st.sidebar.number_input(
+    f"{T(lang,'total_spend')} [{ref_currency}]",
+    min_value=0, value=30000, step=500
+)
 style_options = [T(lang,"style_frugal"), T(lang,"style_normal"), T(lang,"style_fat")]
 stile = st.sidebar.select_slider(T(lang,"style"), options=style_options, value=T(lang,"style_normal"))
 mult_map = {T(lang,"style_frugal"):0.7, T(lang,"style_normal"):1.0, T(lang,"style_fat"):1.3}
 mult = mult_map.get(stile, 1.0)
 
 st.sidebar.subheader(T(lang,"preset_cats"))
-cats = ["housing","food","transport","utilities","leisure","healthcare"]  # lasciate in EN
+cats = ["housing","food","transport","utilities","leisure","healthcare"]  # EN voluto
 defaults = {"housing":35,"food":25,"transport":12,"utilities":8,"leisure":10,"healthcare":10}
 perc = {}; tot = 0
 for c in cats:
@@ -451,16 +458,29 @@ r_bonds  = st.sidebar.slider(T(lang,"r_bonds"), 0.00, 0.06, 0.02, 0.005)
 r_cash   = st.sidebar.slider(T(lang,"r_cash"), 0.00, 0.03, 0.00, 0.005)
 r_re_app = st.sidebar.slider(T(lang,"r_re"), -0.02, 0.06, 0.01, 0.005)
 
-st.sidebar.subheader(T(lang,"rent"))
-rent_ref = st.sidebar.number_input(f"{T(lang,'rent')} [{ref_currency}]", min_value=0, value=0, step=500)
-
+# rendimento reale atteso del portafoglio (resta identico)
 r_real_port = (w_stocks/100)*r_stocks + (w_bonds/100)*r_bonds + (w_cash/100)*r_cash + (w_re/100)*r_re_app
 
 st.sidebar.subheader(T(lang,"infl_pens"))
+rent_ref = st.sidebar.number_input(
+    f"{T(lang,'rent')} [{ref_currency}]",
+    min_value=0, value=0, step=500
+)
 infl = st.sidebar.slider(T(lang,"infl"), 0.0, 0.08, 0.02, 0.005)
-pensione_ref = st.sidebar.number_input(f"{T(lang,'pension')} [{ref_currency}]", min_value=0, value=0, step=500)
+pensione_ref = st.sidebar.number_input(
+    f"{T(lang,'pension')} [{ref_currency}]",
+    min_value=0, value=0, step=500
+)
+start_pens_age = st.sidebar.number_input(
+    T(lang,"pension_age"), min_value=age, max_value=horizon_age, value=max(age,67)
+)
 
-start_pens_age = st.sidebar.number_input(T(lang,"pension_age"), min_value=age, max_value=horizon_age, value=max(age,67))
+# --- conversione in EUR (i calcoli interni restano in EUR) ---
+wealth0 = wealth_ref / rate_ref
+total_spend_year = total_spend_ref / rate_ref
+rent_income = rent_ref / rate_ref
+pensione = pensione_ref / rate_ref
+# =================================================================
 
 # Lookup robusto della città selezionata
 if cities is None or cities.empty or "city" not in cities.columns:
